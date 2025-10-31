@@ -1,0 +1,34 @@
+# SwiftFormat 配置文件
+# 官方文档：https://github.com/nicklockwood/SwiftFormat
+
+# 缩进和空格
+--indent 2                    # 使用2个空格缩进
+--tab-width 2                 # Tab宽度为2
+--allman false                # 大括号不换行
+
+# 换行和空白
+--linebreaks lf               # 使用LF换行符
+--line-after-marks true       # MARK后加空行
+--type-blank-lines insert     # 类型作用域结尾保留空行
+--group-blank-lines true      # 保持作用域之间的空行
+--enable blankLinesBetweenScopes
+
+# 括号和符号
+--enable spaceAroundOperators # 运算符前后加空格
+--disable spaceAroundBraces,spaceAroundBrackets,spaceAroundParens
+--disable spaceInsideBraces,spaceInsideBrackets,spaceInsideParens
+
+# 冗余清理
+--enable redundantParens,redundantReturn,redundantSelf,redundantVoidReturnType
+
+# 导入和排序
+--enable sortImports,duplicateImports # import排序并移除重复
+
+# 注释和文档
+--enable todos                # 保留TODO注释
+
+# 其他
+--semicolons never            # 不使用分号
+--hex-grouping 4,4            # 十六进制数字分组
+--binary-grouping 4,8         # 二进制数字分组
+--decimal-grouping 3,3        # 十进制数字分组
