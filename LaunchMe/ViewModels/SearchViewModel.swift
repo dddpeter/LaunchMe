@@ -1,18 +1,17 @@
 import Foundation
-import Observation
+import Combine
 
 /// 负责管理 Launchpad 搜索逻辑的视图模型。
 @MainActor
-@Observable
-final class SearchViewModel {
+final class SearchViewModel: ObservableObject {
 
   // MARK: - Properties
 
-  var query: String = "" {
+  @Published var query: String = "" {
     didSet { scheduleFiltering() }
   }
 
-  private(set) var results: [AppItem] = []
+  @Published private(set) var results: [AppItem] = []
 
   /// 原始应用列表，作为搜索数据源。
   private var allApps: [AppItem] = []
@@ -23,6 +22,10 @@ final class SearchViewModel {
   func updateSource(_ apps: [AppItem]) {
     allApps = apps
     scheduleFiltering(immediate: true)
+  }
+
+  func updateQuery(_ newQuery: String) {
+    query = newQuery
   }
 
   func displayedApps(fallback apps: [AppItem]) -> [AppItem] {

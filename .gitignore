@@ -28,3 +28,5 @@ parallel_version/
 .cursor/
 .cursorrules
 .vscode/
+.build/
+build/

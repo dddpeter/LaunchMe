@@ -1,21 +1,24 @@
 import SwiftUI
+import AppKit
 
-/// LaunchpadApp 作为 LaunchMe 的入口，提供最基础的窗口场景。
+/// LaunchpadApp 作为 LaunchMe 的入口
 @main
 struct LaunchpadApp: App {
 
   // MARK: - Properties
 
-  /// 占位根视图，将在后续迭代中承载完整功能。
-  private let rootView = LaunchpadRootView()
+  @NSApplicationDelegateAdaptor(LaunchMeAppDelegate.self) var appDelegate
 
   // MARK: - Body
 
   var body: some Scene {
     WindowGroup {
-      rootView
+      EmptyView()
+        .frame(width: 0, height: 0)
+        .opacity(0)
     }
+    .windowStyle(.hiddenTitleBar)
+    .windowResizability(.contentSize)
+    .defaultSize(width: 0, height: 0)
   }
-
 }
-

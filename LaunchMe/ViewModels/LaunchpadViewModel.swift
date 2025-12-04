@@ -4,8 +4,7 @@ import Observation
 
 /// 管理 Launchpad 状态和业务逻辑的视图模型。
 @MainActor
-@Observable
-final class LaunchpadViewModel {
+final class LaunchpadViewModel: ObservableObject {
 
   // MARK: - Types
 
@@ -27,13 +26,13 @@ final class LaunchpadViewModel {
 
   // MARK: - Properties
 
-  private(set) var apps: [AppItem] = []
-  private(set) var folders: [FolderItem] = []
-  private(set) var isLoading = false
-  private(set) var loadingError: String?
-  private(set) var isVisible = false
-  private(set) var isAnimating = false
-  private(set) var activeFolderID: UUID?
+  @Published private(set) var apps: [AppItem] = []
+  @Published private(set) var folders: [FolderItem] = []
+  @Published private(set) var isLoading = false
+  @Published var loadingError: String?
+  @Published private(set) var isVisible = false
+  @Published private(set) var isAnimating = false
+  @Published private(set) var activeFolderID: UUID?
 
   let searchViewModel: SearchViewModel
 
@@ -61,21 +60,30 @@ final class LaunchpadViewModel {
 
     loadTask = Task { [weak self] in
       guard let self else { return }
+      
+      // 开始加载数据
+      
       do {
         async let appsTask = self.appDiscoveryService.discoverApplications()
         async let foldersTask = self.folderService.loadFolders()
 
         let (apps, folders) = try await (appsTask, foldersTask)
+        
         self.apps = apps.isEmpty ? AppItem.placeholders() : apps
         self.folders = folders
         self.searchViewModel.updateSource(self.apps)
         self.isLoading = false
+        
+        // 数据加载完成
       } catch {
         self.loadingError = error.localizedDescription
         self.apps = AppItem.placeholders()
         self.searchViewModel.updateSource(self.apps)
         self.isLoading = false
+        print("加载应用失败：\(error.localizedDescription)")
       }
+      
+      // 加载完成
       self.loadTask = nil
     }
   }
@@ -188,17 +196,30 @@ final class LaunchpadViewModel {
   func createFolder(named name: String) {
     let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmed.isEmpty else { return }
+    
+    // 开始创建文件夹
+    
     let folder = FolderItem(name: trimmed, appBundleIdentifiers: [])
     folders.append(folder)
     persistFolders()
+    
+    // 文件夹创建完成
+    print("已创建文件夹：\(trimmed)")
   }
 
   func renameFolder(id: UUID, to newName: String) {
     guard let index = folders.firstIndex(where: { $0.id == id }) else { return }
     let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmed.isEmpty else { return }
+    
+    // 开始重命名文件夹
+    
+    let oldName = folders[index].name
     folders[index].name = trimmed
     persistFolders()
+    
+    // 文件夹重命名完成
+    print("已重命名文件夹：\(oldName) → \(trimmed)")
   }
 
   func deleteFolder(id: UUID) {
@@ -211,9 +232,17 @@ final class LaunchpadViewModel {
 
   func addApp(_ app: AppItem, to folderID: UUID) {
     guard let index = folders.firstIndex(where: { $0.id == folderID }) else { return }
+    
+    // 开始添加应用到文件夹
+    
     removeApp(app)
     folders[index].appBundleIdentifiers.append(app.bundleIdentifier)
     persistFolders()
+    
+    // 应用添加完成
+    if let folder = folders[safe: index] {
+      print("已将 \(app.displayName) 添加到 \(folder.name)")
+    }
   }
 
   func removeApp(_ app: AppItem, from folderID: UUID) {
@@ -237,24 +266,33 @@ final class LaunchpadViewModel {
   // MARK: - App Actions
 
   func openApp(_ app: AppItem) {
+    print("正在启动 \(app.displayName)...")
+    
     let url = app.bundleURL
     let pathExtension = url.pathExtension.lowercased()
 
     switch pathExtension {
     case "app":
-      launchBundleApplication(at: url, bundleIdentifier: app.bundleIdentifier)
+      launchBundleApplication(at: url, bundleIdentifier: app.bundleIdentifier, appName: app.displayName)
     case "prefpane":
       // 系统偏好设置面板需要走 open 才能正确加载。
-      NSWorkspace.shared.open(url)
+      if NSWorkspace.shared.open(url) {
+        print("已打开 \(app.displayName)")
+      } else {
+        print("无法打开 \(app.displayName)")
+      }
     default:
-      if !NSWorkspace.shared.open(url) {
-        launchBundleApplication(at: url, bundleIdentifier: app.bundleIdentifier)
+      if NSWorkspace.shared.open(url) {
+        print("已打开 \(app.displayName)")
+      } else {
+        launchBundleApplication(at: url, bundleIdentifier: app.bundleIdentifier, appName: app.displayName)
       }
     }
   }
 
   func revealInFinder(_ app: AppItem) {
     NSWorkspace.shared.activateFileViewerSelecting([app.bundleURL])
+    print("已在访达中显示 \(app.displayName)")
   }
 
   // MARK: - Private Helpers
@@ -271,11 +309,12 @@ final class LaunchpadViewModel {
         try await service.saveFolders(foldersToSave)
       } catch {
         self?.loadingError = error.localizedDescription
+        print("保存文件夹失败：\(error.localizedDescription)")
       }
     }
   }
 
-  private func launchBundleApplication(at url: URL, bundleIdentifier: String) {
+  private func launchBundleApplication(at url: URL, bundleIdentifier: String, appName: String) {
     let configuration = NSWorkspace.OpenConfiguration()
     configuration.activates = true
     configuration.promptsUserIfNeeded = true
@@ -285,6 +324,7 @@ final class LaunchpadViewModel {
       if let error {
         Task { @MainActor [weak self] in
           self?.loadingError = error.localizedDescription
+          print("启动 \(appName) 失败：\(error.localizedDescription)")
         }
         return
       }
@@ -294,7 +334,9 @@ final class LaunchpadViewModel {
       guard let fallbackURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleIdentifier),
             fallbackURL != url else {
         Task { @MainActor [weak self] in
-          self?.loadingError = "无法启动应用：\(bundleIdentifier)"
+          let message = "无法启动应用：\(bundleIdentifier)"
+          self?.loadingError = message
+          print(message)
         }
         return
       }
@@ -302,12 +344,22 @@ final class LaunchpadViewModel {
       NSWorkspace.shared.openApplication(at: fallbackURL, configuration: configuration) { [weak self] _, fallbackError in
         if let fallbackError {
           Task { @MainActor [weak self] in
-            self?.loadingError = fallbackError.localizedDescription
+            let message = "启动 \(appName) 失败：\(fallbackError.localizedDescription)"
+            self?.loadingError = message
+            print(message)
           }
         }
       }
     }
   }
 
+}
+
+// MARK: - Array Extension
+
+private extension Array {
+  subscript(safe index: Index) -> Element? {
+    return indices.contains(index) ? self[index] : nil
+  }
 }
 

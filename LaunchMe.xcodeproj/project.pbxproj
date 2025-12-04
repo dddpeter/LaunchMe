@@ -20,6 +20,13 @@
     A000000000000000000000033 /* AppGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000028 /* AppGridItemView.swift */; };
     A000000000000000000000034 /* FolderGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000029 /* FolderGridItemView.swift */; };
     A000000000000000000000035 /* FolderOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000002A /* FolderOverlayView.swift */; };
+    A000000000000000000000036 /* LaunchMeAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000002B /* LaunchMeAppDelegate.swift */; };
+    A000000000000000000000037 /* LaunchMeAppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000002C /* LaunchMeAppManager.swift */; };
+    A000000000000000000000038 /* LaunchpadWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000002D /* LaunchpadWindowManager.swift */; };
+    A000000000000000000000039 /* GlobalHotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000002E /* GlobalHotkeyManager.swift */; };
+    A00000000000000000000003A /* LaunchpadWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000000000000000000002F /* LaunchpadWindow.swift */; };
+    A00000000000000000000003B /* ToastNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000032 /* ToastNotification.swift */; };
+    A00000000000000000000003C /* DraggableAppGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000000000000000000033 /* DraggableAppGrid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +44,13 @@
     A00000000000000000000028 /* AppGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppGridItemView.swift; path = LaunchMe/Views/Components/AppGridItemView.swift; sourceTree = SOURCE_ROOT; };
     A00000000000000000000029 /* FolderGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderGridItemView.swift; path = LaunchMe/Views/Components/FolderGridItemView.swift; sourceTree = SOURCE_ROOT; };
     A0000000000000000000002A /* FolderOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FolderOverlayView.swift; path = LaunchMe/Views/Components/FolderOverlayView.swift; sourceTree = SOURCE_ROOT; };
+    A0000000000000000000002B /* LaunchMeAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LaunchMeAppDelegate.swift; path = LaunchMe/Application/LaunchMeAppDelegate.swift; sourceTree = SOURCE_ROOT; };
+    A0000000000000000000002C /* LaunchMeAppManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LaunchMeAppManager.swift; path = LaunchMe/Application/LaunchMeAppManager.swift; sourceTree = SOURCE_ROOT; };
+    A0000000000000000000002D /* LaunchpadWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LaunchpadWindowManager.swift; path = LaunchMe/Managers/LaunchpadWindowManager.swift; sourceTree = SOURCE_ROOT; };
+    A0000000000000000000002E /* GlobalHotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GlobalHotkeyManager.swift; path = LaunchMe/Managers/GlobalHotkeyManager.swift; sourceTree = SOURCE_ROOT; };
+    A0000000000000000000002F /* LaunchpadWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LaunchpadWindow.swift; path = LaunchMe/Views/LaunchpadWindow.swift; sourceTree = SOURCE_ROOT; };
+    A00000000000000000000032 /* ToastNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ToastNotification.swift; path = LaunchMe/Views/Components/ToastNotification.swift; sourceTree = SOURCE_ROOT; };
+    A00000000000000000000033 /* DraggableAppGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DraggableAppGrid.swift; path = LaunchMe/Views/Components/DraggableAppGrid.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +89,7 @@
         A0000000000000000000001B /* Models */,
         A0000000000000000000001C /* ViewModels */,
         A0000000000000000000001D /* Services */,
+        A0000000000000000000003A /* Managers */,
       );
       path = LaunchMe;
       sourceTree = "<group>";
@@ -83,6 +98,8 @@
       isa = PBXGroup;
       children = (
         A00000000000000000000007 /* LaunchpadApp.swift */,
+        A0000000000000000000002B /* LaunchMeAppDelegate.swift */,
+        A0000000000000000000002C /* LaunchMeAppManager.swift */,
       );
       path = Application;
       sourceTree = "<group>";
@@ -91,6 +108,7 @@
       isa = PBXGroup;
       children = (
         A00000000000000000000008 /* LaunchpadRootView.swift */,
+        A0000000000000000000002F /* LaunchpadWindow.swift */,
         A00000000000000000000030 /* Components */,
       );
       path = Views;
@@ -131,6 +149,15 @@
       path = Services;
       sourceTree = "<group>";
     };
+    A0000000000000000000003A /* Managers */ = {
+      isa = PBXGroup;
+      children = (
+        A0000000000000000000002D /* LaunchpadWindowManager.swift */,
+        A0000000000000000000002E /* GlobalHotkeyManager.swift */,
+      );
+      path = Managers;
+      sourceTree = "<group>";
+    };
     A00000000000000000000030 /* Components */ = {
       isa = PBXGroup;
       children = (
@@ -138,6 +165,8 @@
         A00000000000000000000028 /* AppGridItemView.swift */,
         A00000000000000000000029 /* FolderGridItemView.swift */,
         A0000000000000000000002A /* FolderOverlayView.swift */,
+        A00000000000000000000032 /* ToastNotification.swift */,
+        A00000000000000000000033 /* DraggableAppGrid.swift */,
       );
       path = Components;
       sourceTree = "<group>";
@@ -223,6 +252,13 @@
         A000000000000000000000033 /* AppGridItemView.swift in Sources */,
         A000000000000000000000034 /* FolderGridItemView.swift in Sources */,
         A000000000000000000000035 /* FolderOverlayView.swift in Sources */,
+        A000000000000000000000036 /* LaunchMeAppDelegate.swift in Sources */,
+        A000000000000000000000037 /* LaunchMeAppManager.swift in Sources */,
+        A000000000000000000000038 /* LaunchpadWindowManager.swift in Sources */,
+        A000000000000000000000039 /* GlobalHotkeyManager.swift in Sources */,
+        A00000000000000000000003A /* LaunchpadWindow.swift in Sources */,
+        A00000000000000000000003B /* ToastNotification.swift in Sources */,
+        A00000000000000000000003C /* DraggableAppGrid.swift in Sources */,
       );
       runOnlyForDeploymentPostprocessing = 0;
     };
