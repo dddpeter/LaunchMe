@@ -101,7 +101,8 @@ struct LaunchpadRootView: View {
 
       // 关闭按钮
       Button {
-        // 关闭窗口的逻辑将由窗口管理器处理
+        // 通知窗口管理器关闭窗口
+        NotificationCenter.default.post(name: NSNotification.Name("HideLaunchpad"), object: nil)
       } label: {
         Image(systemName: "xmark.circle.fill")
           .font(.system(size: 20))

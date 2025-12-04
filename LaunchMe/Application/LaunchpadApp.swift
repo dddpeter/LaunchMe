@@ -12,13 +12,8 @@ struct LaunchpadApp: App {
   // MARK: - Body
 
   var body: some Scene {
-    WindowGroup {
+    Settings {
       EmptyView()
-        .frame(width: 0, height: 0)
-        .opacity(0)
     }
-    .windowStyle(.hiddenTitleBar)
-    .windowResizability(.contentSize)
-    .defaultSize(width: 0, height: 0)
   }
 }

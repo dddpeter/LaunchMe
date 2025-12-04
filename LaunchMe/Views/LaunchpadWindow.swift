@@ -38,9 +38,12 @@ final class LaunchpadWindow: NSWindow {
     ignoresMouseEvents = false
     
     // 设置窗口为全屏但不遮挡菜单栏
-    if let screen = NSScreen.main {
-      let screenFrame = screen.visibleFrame
-      setFrame(screenFrame, display: false)
+    // 使用更安全的frame设置方法
+    DispatchQueue.main.async { [weak self] in
+      if let screen = NSScreen.main {
+        let screenFrame = screen.visibleFrame
+        self?.setFrame(screenFrame, display: false)
+      }
     }
     
     // 监听窗口事件
@@ -77,6 +80,18 @@ final class LaunchpadWindow: NSWindow {
       name: NSApplication.didChangeScreenParametersNotification,
       object: nil
     )
+  }
+  
+  // MARK: - Window Behavior
+  
+  /// 允许无边框窗口成为 key window，以便接收键盘事件
+  override var canBecomeKey: Bool {
+    return true
+  }
+  
+  /// 允许窗口成为主窗口
+  override var canBecomeMain: Bool {
+    return true
   }
   
   // MARK: - Event Handling

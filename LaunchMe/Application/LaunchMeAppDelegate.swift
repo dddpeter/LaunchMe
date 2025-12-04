@@ -20,12 +20,7 @@ class LaunchMeAppDelegate: NSObject, NSApplicationDelegate {
     // 设置菜单栏
     setupMenuBar()
 
-    // 延迟显示 Launchpad 窗口，确保所有初始化完成
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-      Task { @MainActor in
-        self?.appManager?.showLaunchpad()
-      }
-    }
+    // 不自动显示Launchpad，用户通过Dock图标或快捷键手动显示
 
     print("LaunchMe 启动完成，按 Option + Space 打开 Launchpad")
   }
@@ -36,10 +31,14 @@ class LaunchMeAppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-    // 点击 Dock 图标时显示 Launchpad
+    // 点击 Dock 图标时激活应用并显示 Launchpad
     if !flag {
-      Task { @MainActor in
-        appManager?.showLaunchpad()
+      // 先激活应用，确保其成为前台应用
+      NSApplication.shared.activate(ignoringOtherApps: true)
+
+      // 然后显示 Launchpad
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        self.appManager?.showLaunchpad()
       }
     }
     return true
@@ -53,11 +52,11 @@ class LaunchMeAppDelegate: NSObject, NSApplicationDelegate {
       NSApplication.shared.applicationIconImage = icon
     }
 
-    // 设置应用不显示在 Dock 中（可选）
-    // NSApplication.shared.setActivationPolicy(.accessory)
+    // 设置应用行为 - 作为后台应用运行，通过Dock图标激活
+    NSApplication.shared.setActivationPolicy(.regular)
 
-    // 隐藏主菜单（可选）
-    // NSApplication.shared.mainMenu = nil
+    // 不自动激活应用，等待用户交互
+    // NSApplication.shared.activate(ignoringOtherApps: true)
   }
 
   private func setupMenuBar() {

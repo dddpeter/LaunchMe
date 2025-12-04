@@ -14,6 +14,7 @@ final class LaunchpadWindowManager: ObservableObject {
   
   init(viewModel: LaunchpadViewModel) {
     self.viewModel = viewModel
+    setupNotificationObservers()
   }
   
   // MARK: - Public Methods
@@ -28,14 +29,19 @@ final class LaunchpadWindowManager: ObservableObject {
     
     viewModel.willShowWindow()
     
-    // 设置窗口为全屏
-    if let screen = NSScreen.main {
-      let screenFrame = screen.visibleFrame
-      window.setFrame(screenFrame, display: true)
+    // 确保窗口位置正确
+    if let screen = NSScreen.main, !screen.visibleFrame.equalTo(window.frame) {
+      let frame = screen.visibleFrame
+      window.setFrame(frame, display: false)
     }
-    
+
+    // 确保窗口可以接收键盘事件
+    window.makeKey()
+
+    // 显示窗口并置于最前
+    window.orderFront(nil)
     window.makeKeyAndOrderFront(nil)
-    
+
     // 动画显示窗口
     WindowAnimator.show(window) { [weak self] in
       self?.viewModel.didShowWindow()
@@ -74,9 +80,24 @@ final class LaunchpadWindowManager: ObservableObject {
   }
   
   // MARK: - Private Methods
-  
+
+  private func setupNotificationObservers() {
+    // 监听关闭通知
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(handleHideNotification),
+      name: NSNotification.Name("HideLaunchpad"),
+      object: nil
+    )
+  }
+
+  @objc private func handleHideNotification() {
+    hideWindow()
+  }
+
   /// 清理窗口资源
   func cleanup() {
+    NotificationCenter.default.removeObserver(self)
     launchpadWindow?.close()
     launchpadWindow = nil
   }
